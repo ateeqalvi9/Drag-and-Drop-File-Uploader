@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Premium drag-and-drop image uploader with previews, progress, and local storage." />
+    <title>Premium File Uploader</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230d1117'/%3E%3Cpath d='M30 68l20-20 20 20v2H30z' fill='%23fff'/%3E%3Ccircle cx='38' cy='36' r='8' fill='%2393c5fd'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+    <div class="background-glow glow-three"></div>
+
+    <div class="app-shell">
+      <header class="hero" role="banner">
+        <div class="hero__text">
+          <p class="eyebrow">Premium portfolio project</p>
+          <h1>Modern Drag &amp; Drop File Uploader</h1>
+          <p class="hero__lead">Upload images with elegant motion, validation, previews, and persistent storage.</p>
+        </div>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+          <span class="theme-toggle__label">Dark</span>
+        </button>
+      </header>
+
+      <main>
+        <section class="upload-panel" aria-labelledby="upload-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-tag">Upload area</p>
+              <h2 id="upload-title">Drop your image here</h2>
+            </div>
+            <p class="panel-copy">JPG, JPEG, PNG, or GIF up to 5 MB.</p>
+          </div>
+
+          <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Upload an image by dragging or clicking">
+            <input id="fileInput" class="file-input" type="file" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif" hidden />
+            <div class="drop-zone__icon" aria-hidden="true">⬆</div>
+            <h3>Drag &amp; drop your image</h3>
+            <p>or click anywhere inside this area to browse files</p>
+            <div class="drop-zone__hint">Supports JPG, PNG, GIF • Max 5 MB</div>
+          </div>
+
+          <div id="errorCard" class="error-card hidden" role="alert" aria-live="assertive"></div>
+        </section>
+
+        <section class="preview-panel" aria-labelledby="preview-title">
+          <article class="preview-card">
+            <div class="preview-card__header">
+              <div>
+                <p class="section-tag">Preview</p>
+                <h2 id="preview-title">Your uploaded image</h2>
+              </div>
+              <span id="restoredBadge" class="status-badge hidden">Restored from previous session</span>
+            </div>
+
+            <div id="emptyState" class="empty-state">
+              <div class="empty-state__icon" aria-hidden="true">🖼️</div>
+              <h3>No image uploaded yet</h3>
+              <p>Your preview will appear here after a successful upload.</p>
+            </div>
+
+            <div id="previewContent" class="preview-content hidden">
+              <div class="preview-image-wrap">
+                <img id="previewImage" class="preview-image" alt="Uploaded preview" />
+              </div>
+
+              <div class="preview-meta">
+                <dl class="meta-list">
+                  <div class="meta-item">
+                    <dt>File name</dt>
+                    <dd id="metaName">—</dd>
+                  </div>
+                  <div class="meta-item">
+                    <dt>File size</dt>
+                    <dd id="metaSize">—</dd>
+                  </div>
+                  <div class="meta-item">
+                    <dt>File type</dt>
+                    <dd id="metaType">—</dd>
+                  </div>
+                  <div class="meta-item">
+                    <dt>Resolution</dt>
+                    <dd id="metaResolution">—</dd>
+                  </div>
+                  <div class="meta-item">
+                    <dt>Upload time</dt>
+                    <dd id="metaUploadTime">—</dd>
+                  </div>
+                  <div class="meta-item">
+                    <dt>Status</dt>
+                    <dd id="metaStatus">Ready</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="action-row">
+                <button id="downloadBtn" class="btn btn--ghost" type="button">Download</button>
+                <button id="copyNameBtn" class="btn btn--ghost" type="button">Copy Name</button>
+                <button id="zoomBtn" class="btn btn--ghost" type="button">Zoom</button>
+              </div>
+
+              <div class="progress-section" aria-live="polite">
+                <div class="status-row">
+                  <span id="uploadStatus">Ready</span>
+                  <span id="uploadPercent">0%</span>
+                </div>
+                <div class="progress-bar" aria-hidden="true">
+                  <div id="progressFill" class="progress-bar__fill"></div>
+                </div>
+                <p id="uploadSpeed" class="upload-speed">Waiting for upload…</p>
+              </div>
+
+              <div class="action-row action-row--secondary">
+                <button id="removeBtn" class="btn btn--danger" type="button">Remove</button>
+                <button id="uploadAnotherBtn" class="btn btn--primary" type="button">Upload Another</button>
+              </div>
+            </div>
+          </article>
+
+          <aside class="stats-card" aria-labelledby="stats-title">
+            <div class="stats-card__header">
+              <div>
+                <p class="section-tag">Insights</p>
+                <h2 id="stats-title">Upload activity</h2>
+              </div>
+            </div>
+
+            <ul class="stats-list">
+              <li>
+                <span>Images stored</span>
+                <strong id="statCount">0</strong>
+              </li>
+              <li>
+                <span>Storage used</span>
+                <strong id="statSize">0 KB</strong>
+              </li>
+              <li>
+                <span>Last upload</span>
+                <strong id="statLast">—</strong>
+              </li>
+            </ul>
+
+            <div class="gallery-card">
+              <div class="gallery-card__header">
+                <h3>Recent uploads</h3>
+                <span class="gallery-card__hint">Tap a tile to restore</span>
+              </div>
+              <div id="galleryList" class="gallery-list"></div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="zoomModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Zoomed upload preview">
+      <button id="closeModalBtn" class="modal-close" type="button" aria-label="Close preview">×</button>
+      <img id="modalImage" class="modal-image" alt="Fullscreen preview" />
+    </div>
+
+    <footer class="footer">
+      <p>Built with semantic HTML, CSS motion, and vanilla JavaScript.</p>
+    </footer>
+  </body>
+</html>
